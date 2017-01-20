@@ -70,6 +70,10 @@ public class HTTPRequest {
 
         if (secondSentence.equals("/")){
             this.requestURI = "/index.html";
+        }else if(secondSentence.equals("/index.html")){
+            this.requestURI = "/index.html";
+        }else if(secondSentence.equals("/001.jpeg")){
+            this.requestURI = "/001.jpeg";
         }
 
 //        if ((secondSentence.indexOf("?") == -1)) {
