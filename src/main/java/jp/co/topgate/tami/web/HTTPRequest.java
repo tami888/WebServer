@@ -1,9 +1,8 @@
 package jp.co.topgate.tami.web;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URLDecoder;
+
 
 /**
  * クライアントからのTTPリクエストに関する責務を持つクラス
@@ -38,9 +37,14 @@ public class HTTPRequest {
     public HTTPRequest(InputStream inputStream) {
         this.inputStream = inputStream;
         this.setHTTPRequestLine();
+        if (requestLine == null) {
+            return;
+        }
         this.setRequestURI();
         this.setRequestMethod();
     }
+
+
 
     /**
      * クライアントからのリクエストから、リクエストラインを抽出してフィールドに設定するメソッド
@@ -50,33 +54,65 @@ public class HTTPRequest {
         try {
             this.requestLine = bufferedReader.readLine();
             System.out.println("リクエストラインは" + requestLine);
-            if (bufferedReader != null) {
+            if (requestLine == null) {
+                // TODO:throw exception => HTTP Status 400~
+//                throw new RuntimeException("RequestHeader is INVALID!!");
             }
         } catch (IOException e) {
             System.err.println("エラー:" + e.getMessage());
             e.printStackTrace();
+            // TODO: 2017/01/21 need handling
         }
     }
 
     /**
      * クライアントからのリクエストから、リクエストURIを抽出してフィールドに設定するメソッド
      */
-    public void setRequestURI() {
+    public  void setRequestURI() {
         int firstEmpty = this.requestLine.indexOf(" ");
 
         String secondSentence = this.requestLine.substring(firstEmpty + 1,
                 this.requestLine.indexOf(" ", firstEmpty + 1));
-        System.out.println("secondSentenceは"+secondSentence);
 
-        if (secondSentence.equals("/")){
-            this.requestURI = "/index.html";
+        String dir = "";
+
+        if (secondSentence.indexOf("/.") != -1){
+            dir = secondSentence.substring(secondSentence.lastIndexOf("/."),
+                    secondSentence.lastIndexOf("/"));
         }
 
-//        if ((secondSentence.indexOf("?") == -1)) {
-//            this.requestURI = secondSentence;
-//        } else {
-//            this.requestURI = secondSentence.substring(0, secondSentence.indexOf("?"));
-//        }
+        System.out.println("dirは"+dir);
+
+
+        if (secondSentence.indexOf("?") == -1) {
+            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/"),
+                    secondSentence.lastIndexOf(""));
+            secondSentence = dir + secondSentence;
+            System.out.println(secondSentence);
+        }else {
+            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/") ,
+                    secondSentence.indexOf("?"));
+            secondSentence = dir + secondSentence;
+            System.out.println(secondSentence);
+        }
+
+        System.out.println("secondSentenceは"+secondSentence);
+
+
+
+        try {
+            secondSentence = URLDecoder.decode(secondSentence, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (secondSentence.equals("/")){
+            this.requestURI = "/index.html";
+        }else if(secondSentence.equals(secondSentence)) {
+            this.requestURI = secondSentence;
+        }
+
+
+
     }
 
 
