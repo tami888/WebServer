@@ -3,12 +3,6 @@ package jp.co.topgate.tami.web;
 import java.io.*;
 import java.net.URLDecoder;
 
-
-/**
- * クライアントからのTTPリクエストに関する責務を持つクラス
- *
- * @author sekiguchikai
- */
 public class HTTPRequest {
 
     /**
@@ -43,7 +37,6 @@ public class HTTPRequest {
         this.setRequestURI();
         this.setRequestMethod();
     }
-
 
 
     /**
