@@ -104,6 +104,8 @@ public class HTTPResponse {
         if (map instanceof MimetypesFileTypeMap) {
             try {
                 ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
+                ((MimetypesFileTypeMap) map).addMimeTypes("text/javascript js JS");
+                ((MimetypesFileTypeMap) map).addMimeTypes("text/css css CSS");
             } catch (Exception ignored) {}
         }
 
