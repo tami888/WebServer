@@ -4,11 +4,7 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
 
-/**
- * クライアントへ送信するHTTPレスポンスに関する責務を持つクラス
- *
- * @author sekiguchikai
- */
+
 public class HTTPResponse {
 
     /**
@@ -81,9 +77,6 @@ public class HTTPResponse {
         }
     }
 
-
-    /////////////////////////////////////////////////////////////////////////////////
-    //
     /**
      * クライアントへOK応答を返す。
      * @param len コンテンツ長
@@ -125,7 +118,7 @@ public class HTTPResponse {
             bi.close();
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////
+
 
 
 }

@@ -23,8 +23,6 @@ public class Handler {
 
 
 
-
-
         if (file.exists()) {
             httpResponse.setStatusLine("HTTP/1.1 200 OK");
             System.out.println(httpResponse.getStatusLine());
@@ -36,8 +34,6 @@ public class Handler {
             file =new File(userDir + "/src/main/resource/error.html");
             httpResponse.responseF(file);
         }
-
-
 
 
 
