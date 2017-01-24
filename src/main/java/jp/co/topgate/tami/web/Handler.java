@@ -22,7 +22,6 @@ public class Handler {
         System.out.println("fileは" + file);
 
 
-
         if (file.exists()) {
             httpResponse.setStatusLine("HTTP/1.1 200 OK");
             System.out.println(httpResponse.getStatusLine());
