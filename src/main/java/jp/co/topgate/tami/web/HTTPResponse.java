@@ -35,7 +35,6 @@ public class HTTPResponse {
         this.statusLine = statusLine;
     }
 
-
     /**
      * statusLineを取得するためのメソッド
      *
