@@ -34,34 +34,6 @@ public class Handler {
             file =new File(userDir + "/src/main/resource/error.html");
             httpResponse.responseF(file);
         }
-
-
-
-//        try {
-//            FileInputStream fileInputStream = new FileInputStream(file);
-//            byte line[] = new byte[500];
-//            int i;
-//            while (( i = fileInputStream.read(line,0,500)) != -1 ) {
-//                httpResponse.getOutputStream().write(line,0,i);
-//            }
-//            httpResponse.getOutputStream().flush();
-//            fileInputStream.close();
-//        }catch(IOException e){
-//            System.out.println("\n** send_File() IOException **");
-//            e.printStackTrace();
-//        }
-
-
-
-
-//         String uri;
-//         uri =  httpRequest.getRequestURI();
-//
-//         httpResponse.sendBody(uri);
-
-
     }
-
-
 
 }

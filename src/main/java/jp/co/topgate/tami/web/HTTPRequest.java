@@ -38,7 +38,6 @@ public class HTTPRequest {
         this.setRequestMethod();
     }
 
-
     /**
      * クライアントからのリクエストから、リクエストラインを抽出してフィールドに設定するメソッド
      */
@@ -92,7 +91,6 @@ public class HTTPRequest {
         System.out.println("secondSentenceは"+secondSentence);
 
 
-
         try {
             secondSentence = URLDecoder.decode(secondSentence, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -104,10 +102,7 @@ public class HTTPRequest {
             this.requestURI = secondSentence;
         }
 
-
-
     }
-
 
     /**
      * クライアントからのリクエストから、リクエストメソッドを抽出してフィールドに設定するメソッド
