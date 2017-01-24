@@ -19,11 +19,6 @@ public class WebServer {
     }
 
     public void init()throws IOException {
-//        String userDir=null;
-//        userDir = System.getProperties().getProperty("user.dir");
-
-//        ServerSocket serverSocket = null;
-//        Socket socket = null;
         System.out.println("START Web_Server http://localhost:8080");
 
         try (ServerSocket serverSocket = new ServerSocket(port);) {
@@ -60,18 +55,6 @@ public class WebServer {
         } catch (IOException e) {
             System.err.println("エラー" + e.getMessage());
             System.exit(1);
-//        } finally {
-//            if (serverSocket != null) {
-//                System.out.println("サーバーソケットを閉じます");
-//                serverSocket.close();
-//            }
-//
-//            if (socket != null) {
-//                socket.close();
-//            }
-//
-//
         }
     }
-
 }
