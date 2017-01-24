@@ -16,9 +16,6 @@ public class HTTPResponse {
      */
     private String statusLine;
 
-
-
-
     /**
      * コンストラクタ
      *
@@ -47,10 +44,6 @@ public class HTTPResponse {
     public String getStatusLine(){
         return this.statusLine;
     }
-
-
-
-
 
     void responseFailure(long len, String type, OutputStream outputStream)throws IOException{
         PrintWriter prn = new PrintWriter(outputStream);
@@ -104,6 +97,8 @@ public class HTTPResponse {
         if (map instanceof MimetypesFileTypeMap) {
             try {
                 ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
+                ((MimetypesFileTypeMap) map).addMimeTypes("text/javascript js JS");
+                ((MimetypesFileTypeMap) map).addMimeTypes("text/css css CSS");
             } catch (Exception ignored) {}
         }
 
@@ -117,6 +112,19 @@ public class HTTPResponse {
         } finally {
             bi.close();
         }
+    }
+
+    public String ContentType(File f){
+        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
+        if (map instanceof MimetypesFileTypeMap) {
+            try {
+                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
+                ((MimetypesFileTypeMap) map).addMimeTypes("text/javascript js JS");
+                ((MimetypesFileTypeMap) map).addMimeTypes("text/css css CSS");
+            } catch (Exception ignored) {}
+        }
+        String type = map.getContentType(f);
+        return type;
     }
 
 

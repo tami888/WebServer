@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.StringTokenizer;
 
 import org.junit.Test;
 
@@ -61,7 +62,5 @@ public class HTTPRequestTest {
         }
 
     }
-
-
 
 }
