@@ -26,7 +26,6 @@ public class HTTPRequest {
     /**
      * コンストラクタ、set~で各フィールドを初期設定する
      *
-     * @paramsocketからのstreamを受け取る
      */
     public HTTPRequest(InputStream inputStream) {
         this.inputStream = inputStream;
@@ -47,13 +46,11 @@ public class HTTPRequest {
             this.requestLine = bufferedReader.readLine();
             System.out.println("リクエストラインは" + requestLine);
             if (requestLine == null) {
-                // TODO:throw exception => HTTP Status 400~
 //                throw new RuntimeException("RequestHeader is INVALID!!");
             }
         } catch (IOException e) {
             System.err.println("エラー:" + e.getMessage());
             e.printStackTrace();
-            // TODO: 2017/01/21 need handling
         }
     }
 
@@ -66,43 +63,72 @@ public class HTTPRequest {
         String secondSentence = this.requestLine.substring(firstEmpty + 1,
                 this.requestLine.indexOf(" ", firstEmpty + 1));
 
-        String dir = "";
-
-        if (secondSentence.indexOf("/.") != -1){
-            dir = secondSentence.substring(secondSentence.lastIndexOf("/."),
-                    secondSentence.lastIndexOf("/"));
-        }
-
-        System.out.println("dirは"+dir);
-
-
-        if (secondSentence.indexOf("?") == -1) {
-            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/"),
-                    secondSentence.lastIndexOf(""));
-            secondSentence = dir + secondSentence;
-            System.out.println(secondSentence);
-        }else {
-            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/") ,
-                    secondSentence.indexOf("?"));
-            secondSentence = dir + secondSentence;
-            System.out.println(secondSentence);
-        }
-
-        System.out.println("secondSentenceは"+secondSentence);
-
-
         try {
             secondSentence = URLDecoder.decode(secondSentence, "UTF-8");
+            this.requestURI = secondSentence;
+            System.out.println("secondSentenceは"+secondSentence);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        if (secondSentence.equals("/")){
-            this.requestURI = "/index.html";
-        }else if(secondSentence.equals(secondSentence)) {
-            this.requestURI = secondSentence;
-        }
+
+
+//        String dir = "";
+//
+//        if (secondSentence.indexOf("/.") != -1){
+//            dir = secondSentence.substring(secondSentence.lastIndexOf("/."),
+//                    secondSentence.lastIndexOf("/"));
+//        }
+//
+//        System.out.println("dirは"+dir);
+
+
+//        if (secondSentence.indexOf("?") == -1) {
+//            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/"),
+//                    secondSentence.lastIndexOf(""));
+//
+//            System.out.println(secondSentence);
+//        }else {
+//            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/") ,
+//                    secondSentence.indexOf("?"));
+//
+//            System.out.println(secondSentence);
+//        }
+
+
+//        try {
+//            secondSentence = URLDecoder.decode(secondSentence, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        if (secondSentence.equals("/")){
+//            this.requestURI = "/index.html";
+//        }else if(secondSentence.equals(secondSentence)) {
+//            this.requestURI = secondSentence;
+//        }
 
     }
+
+    public String getRequestResource() {
+        String requestResource;
+        if ((this.getRequestURI().endsWith("/")) || !(this.getRequestURI().substring(this.getRequestURI().lastIndexOf("/"), this.getRequestURI().length()).contains("."))) {
+            requestResource = "src/main/resource" + this.getRequestURI() + "index.html";
+        } else {
+            requestResource = "src/main/resource" + this.getRequestURI();
+        }
+
+        System.out.println("要求されているファイルは" + requestResource);
+        return requestResource;
+
+    }
+
+    public String getRequestResourceExtension(String requestResource) {
+
+        String extension = requestResource.substring(requestResource.lastIndexOf(".") + 1,
+                requestResource.lastIndexOf(""));
+        System.out.println("ファイルの拡張子は" + extension);
+        return extension;
+    }
+
 
     /**
      * クライアントからのリクエストから、リクエストメソッドを抽出してフィールドに設定するメソッド
@@ -138,5 +164,6 @@ public class HTTPRequest {
     public String getRequestURI() {
         return this.requestURI;
     }
+
 
 }

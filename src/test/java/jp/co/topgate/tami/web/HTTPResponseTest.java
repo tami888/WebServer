@@ -17,13 +17,14 @@ public class HTTPResponseTest {
 
     @Test
     public void testContentType(){
-        String fileExt[] = {"/.html", ".css", ".js", ".jpeg", ".png", ".gif"};
-        String expectedContents[] = {"text/html", "text/css", "text/javascript", "image/jpeg", "image/png", "image/gif"};
+        String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
+        String expectedContents[] = {"Content-Type: text/html", "Content-Type: text/css", "Content-Type: text/javascript", "Content-Type: image/jpeg", "Content-Type: image/png", "Content-Type: image/gif"};
 
         for (int i = 0; i < fileExt.length; i++) {
-            File file =new File("/src/main/resource"+ fileExt[i] );
 
-            assertEquals(expectedContents[i], httpResponse.ContentType(file));
+            String file =  fileExt[i];
+
+            assertEquals(expectedContents[i], httpResponse.contentType(file));
         }
     }
 }

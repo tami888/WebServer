@@ -1,8 +1,13 @@
 package jp.co.topgate.tami.web;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HTTPResponse {
@@ -12,37 +17,52 @@ public class HTTPResponse {
      */
     private OutputStream outputStream;
     /**
-     * クライアントへのレスポンスライン
+     * リクエストが成功した場合のコード
      */
-    private String statusLine;
+    public static final int message_OK = 200;
+    /**
+     * リクエストにエラーがあります
+     */
+    public static final int Message_Bad_Request = 400;
+    /**
+     * 該当のページが存在しない時
+     */
+    public static final int message_NOT_FOUND = 404;
 
     /**
      * コンストラクタ
-     *
-     * @param outputStream
      */
     HTTPResponse(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
     /**
-     * クライアントへ送信するレスポンスのうち、ステータスラインを設定するメソッド
-     *
-     * @param statusLine
-     *
+     * レスポンスボディ
      */
-    public void setStatusLine(String statusLine) {
-        this.statusLine = statusLine;
+    private File ResponseBody;
+    /**
+     * レスポンスボディを設定するメソッド
+     */
+    public void setResponseBody(File file){
+        this.ResponseBody = file;
     }
 
-    /**
-     * statusLineを取得するためのメソッド
-     *
-     * @return responseHeader
-     */
-    public String getStatusLine(){
-        return this.statusLine;
+    public void sendResponse(int message, String causing, String fileEx) throws IOException{
+
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream) ;
+
+        FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
+        DataHandler dataHandler = new DataHandler(fileDataSource);
+
+        byte[] responseHead =  ("HTTP/1.1 " + message_OK + " " + causing + "\n" + this.contentType(fileEx) + "\n").getBytes();
+        dataOutputStream.write(responseHead);
+        dataHandler.writeTo(dataOutputStream);
+        dataOutputStream.flush();
+        dataOutputStream.close();
     }
+
+
+
 
     void responseFailure(long len, String type, OutputStream outputStream)throws IOException{
         PrintWriter prn = new PrintWriter(outputStream);
@@ -113,18 +133,40 @@ public class HTTPResponse {
         }
     }
 
-    public String ContentType(File f){
-        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
-        if (map instanceof MimetypesFileTypeMap) {
-            try {
-                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
-                ((MimetypesFileTypeMap) map).addMimeTypes("text/javascript js JS");
-                ((MimetypesFileTypeMap) map).addMimeTypes("text/css css CSS");
-            } catch (Exception ignored) {}
+//    public String contentType(String f){
+//        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
+//        if (map instanceof MimetypesFileTypeMap) {
+//            try {
+//                ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
+//                ((MimetypesFileTypeMap) map).addMimeTypes("text/javascript js JS");
+//                ((MimetypesFileTypeMap) map).addMimeTypes("text/css css CSS");
+//            } catch (Exception ignored) {}
+//        }
+//        String type = "Content-Type: " + map.getContentType(f);
+//        return type;
+//    }
+
+    public String contentType(String fileExt) {
+
+        Map<String, String> contentTypeMap = new HashMap<>();
+        contentTypeMap.put("html", "Content-Type: text/html" + "\n");
+        contentTypeMap.put("css", "Content-Type: text/css" + "\n");
+        contentTypeMap.put("js", "Content-Type: text/js" + "\n");
+        contentTypeMap.put("jpeg", "Content-Type: image/jpeg" + "\n");
+        contentTypeMap.put("png", "Content-Type: image/png" + "\n");
+        contentTypeMap.put("gif", "Content-Type: image/gif" + "\n");
+
+        String contentType = contentTypeMap.get(fileExt);
+
+        if (contentType == null) {
+            contentType = "Content-Type: application/octet-stream" + "\n";
         }
-        String type = map.getContentType(f);
-        return type;
+
+        System.out.println("レスポンスヘッダは" + contentType);
+        return contentType;
+
     }
+
 
 
 
