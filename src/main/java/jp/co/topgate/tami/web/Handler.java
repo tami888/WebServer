@@ -16,21 +16,21 @@ public class Handler {
         String ext = httpRequest.getRequestResourceExtension(requestResource);
         File file = new File(requestResource);
 
+        System.out.println("リクエストリソースは" + requestResource);
+
+        ErrorPage errorPage = new ErrorPage();
+
 
         if (file.exists()) {
             System.out.println("ファイルを見つけました");
             System.out.println("レスポンスを送ります");
-
             httpResponse.setResponseBody(file);
             httpResponse.sendResponse(HTTPResponse.message_OK, "OK", ext);
-
-
         } else {
-            httpResponse.setResponseBody(file);
-            httpResponse.sendResponse(HTTPResponse.message_OK, "OK", ext);
-            System.out.println("レスポンスを送ります");
-            httpResponse.response(file);
-
+            System.out.println("ファイルが見つかりませんでした");
+            errorPage.setErrMessage("404 NOT Found");
+            errorPage.writeHTML(httpRequest, httpResponse);
+            httpResponse.sendResponse(HTTPResponse.message_NOT_FOUND, "Not Found", "html");
         }
     }
 

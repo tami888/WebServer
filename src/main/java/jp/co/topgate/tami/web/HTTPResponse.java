@@ -5,7 +5,6 @@ import javax.activation.FileDataSource;
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,9 +36,22 @@ public class HTTPResponse {
     }
 
     /**
+     * 動的なレスポンスボディ
+     */
+    private byte[] dynamicResponseBody;
+
+    /**
      * レスポンスボディ
      */
     private File ResponseBody;
+
+    /**
+     * 動的レスポンスボディ
+     */
+    public void setDynamicResponseBody(byte[] responseBody) {
+        this.dynamicResponseBody = responseBody;
+    }
+
     /**
      * レスポンスボディを設定するメソッド
      */
@@ -47,18 +59,29 @@ public class HTTPResponse {
         this.ResponseBody = file;
     }
 
-    public void sendResponse(int message, String causing, String fileEx) throws IOException{
 
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream) ;
 
-        FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
-        DataHandler dataHandler = new DataHandler(fileDataSource);
 
-        byte[] responseHead =  ("HTTP/1.1 " + message_OK + " " + causing + "\n" + this.contentType(fileEx) + "\n").getBytes();
-        dataOutputStream.write(responseHead);
-        dataHandler.writeTo(dataOutputStream);
-        dataOutputStream.flush();
-        dataOutputStream.close();
+    public void sendResponse(int message, String causing, String fileEx) throws IOException {
+
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+
+        if (this.dynamicResponseBody != null) {
+            // 引数で受け取ったステータスラインとレスポンスヘッダを結合
+            byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentType(fileEx) + "\n").getBytes();
+            dataOutputStream.write(responseHead);
+            dataOutputStream.write(this.dynamicResponseBody);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+        } else {
+            FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
+            DataHandler dataHandler = new DataHandler(fileDataSource);
+            byte[] responseHead = ("HTTP/1.1 " + causing + " " + causing + "\n" + this.contentType(fileEx) + "\n").getBytes();
+            dataOutputStream.write(responseHead);
+            dataHandler.writeTo(dataOutputStream);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+        }
     }
 
 

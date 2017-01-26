@@ -1,7 +1,6 @@
 package jp.co.topgate.tami.web;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,7 +48,10 @@ public class WebServer {
                         handler.handleGET(httpRequest, httpResponse);
                     }else{
                         System.out.println("リクエストメソッドが不正です");
-
+                        ErrorPage errorPage = new ErrorPage();
+                        errorPage.setErrMessage("400 Bad Request");
+                        errorPage.writeHTML(httpRequest, httpResponse);
+                        httpResponse.sendResponse(HTTPResponse.Message_Bad_Request, "Bad Request", "html");
 
                     }
                 }

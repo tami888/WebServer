@@ -3,9 +3,11 @@ package jp.co.topgate.tami.web;
 
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by honmatakumi on 2017/01/24.
@@ -18,13 +20,13 @@ public class HTTPResponseTest {
     @Test
     public void testContentType(){
         String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
-        String expectedContents[] = {"Content-Type: text/html", "Content-Type: text/css", "Content-Type: text/javascript", "Content-Type: image/jpeg", "Content-Type: image/png", "Content-Type: image/gif"};
+        String expectedContents[] = {"Content-Type: text/html\n", "Content-Type: text/css\n", "Content-Type: text/js\n", "Content-Type: image/jpeg\n", "Content-Type: image/png\n", "Content-Type: image/gif\n"};
 
         for (int i = 0; i < fileExt.length; i++) {
 
             String file =  fileExt[i];
 
-            assertEquals(expectedContents[i], httpResponse.contentType(file));
+            assertThat(expectedContents[i], is(httpResponse.contentType(file)));
         }
     }
 }

@@ -46,7 +46,7 @@ public class HTTPRequest {
             this.requestLine = bufferedReader.readLine();
             System.out.println("リクエストラインは" + requestLine);
             if (requestLine == null) {
-//                throw new RuntimeException("RequestHeader is INVALID!!");
+                System.out.println("リクエストラインがありません");
             }
         } catch (IOException e) {
             System.err.println("エラー:" + e.getMessage());
@@ -72,40 +72,6 @@ public class HTTPRequest {
         }
 
 
-//        String dir = "";
-//
-//        if (secondSentence.indexOf("/.") != -1){
-//            dir = secondSentence.substring(secondSentence.lastIndexOf("/."),
-//                    secondSentence.lastIndexOf("/"));
-//        }
-//
-//        System.out.println("dirは"+dir);
-
-
-//        if (secondSentence.indexOf("?") == -1) {
-//            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/"),
-//                    secondSentence.lastIndexOf(""));
-//
-//            System.out.println(secondSentence);
-//        }else {
-//            secondSentence = secondSentence.substring(secondSentence.lastIndexOf("/") ,
-//                    secondSentence.indexOf("?"));
-//
-//            System.out.println(secondSentence);
-//        }
-
-
-//        try {
-//            secondSentence = URLDecoder.decode(secondSentence, "UTF-8");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        if (secondSentence.equals("/")){
-//            this.requestURI = "/index.html";
-//        }else if(secondSentence.equals(secondSentence)) {
-//            this.requestURI = secondSentence;
-//        }
-
     }
 
     public String getRequestResource() {
@@ -115,6 +81,12 @@ public class HTTPRequest {
         } else {
             requestResource = "src/main/resource" + this.getRequestURI();
         }
+        if (requestResource.indexOf("?") != -1) {
+            requestResource = requestResource.substring(requestResource.indexOf(""), requestResource.lastIndexOf("?"));
+
+        }
+
+
 
         System.out.println("要求されているファイルは" + requestResource);
         return requestResource;
@@ -126,6 +98,7 @@ public class HTTPRequest {
         String extension = requestResource.substring(requestResource.lastIndexOf(".") + 1,
                 requestResource.lastIndexOf(""));
         System.out.println("ファイルの拡張子は" + extension);
+
         return extension;
     }
 
