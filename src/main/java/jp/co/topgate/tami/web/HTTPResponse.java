@@ -6,8 +6,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class HTTPResponse {
@@ -28,6 +26,10 @@ public class HTTPResponse {
      * 該当のページが存在しない時
      */
     public static final int message_NOT_FOUND = 404;
+    /**
+     * 許可されていないメソッドタイプのリクエストを受けた。
+     */
+    public static final int message_METHOD_Not_ALLOWED = 405;
 
     /**
      * コンストラクタ
@@ -61,7 +63,7 @@ public class HTTPResponse {
     }
 
 
-
+//ダイナミックレスポンスボディとレスポンスボディで分けなくてもよろしいのでは？
 
     public void sendResponse(int message, String causing, String fileEx) throws IOException {
 
@@ -69,7 +71,7 @@ public class HTTPResponse {
 
         if (this.dynamicResponseBody != null) {
             // 引数で受け取ったステータスラインとレスポンスヘッダを結合
-            byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentType(fileEx) + "\n").getBytes();
+            byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentTypeExt(fileEx) + "\n").getBytes();
             dataOutputStream.write(responseHead);
             dataOutputStream.write(this.dynamicResponseBody);
             dataOutputStream.flush();
@@ -77,7 +79,7 @@ public class HTTPResponse {
         } else {
             FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
             DataHandler dataHandler = new DataHandler(fileDataSource);
-            byte[] responseHead = ("HTTP/1.1 " + causing + " " + causing + "\n" + this.contentType(fileEx) + "\n").getBytes();
+            byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentTypeExt(fileEx) + "\n").getBytes();
             dataOutputStream.write(responseHead);
             dataHandler.writeTo(dataOutputStream);
             dataOutputStream.flush();
@@ -85,29 +87,42 @@ public class HTTPResponse {
         }
     }
 
-
-    public String contentType(String fileExt) {
-
-        Map<String, String> contentTypeMap = new HashMap<>();
-        contentTypeMap.put("html", "Content-Type: text/html" + "\n");
-        contentTypeMap.put("css", "Content-Type: text/css" + "\n");
-        contentTypeMap.put("js", "Content-Type: text/js" + "\n");
-        contentTypeMap.put("jpeg", "Content-Type: image/jpeg" + "\n");
-        contentTypeMap.put("png", "Content-Type: image/png" + "\n");
-        contentTypeMap.put("gif", "Content-Type: image/gif" + "\n");
-
-        String contentType = contentTypeMap.get(fileExt);
-
-        if (contentType == null) {
-            contentType = "Content-Type: application/octet-stream" + "\n";
-        }
-
-        System.out.println("レスポンスヘッダは" + contentType);
-        return contentType;
-
+    public String contentTypeExt(String fileEx) {
+        String fileType = contentType(fileEx);
+        return "Content-Type: " + fileType + "\n";
     }
 
 
-
-
+    //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
+    //setterとgetterの慣習に則っていない
+    //sendResponseのテストを書く
+    //ハンドラーのテストも書いたほうが良さげ
+    //InputStreamやOutputStreamを避けている節がある。
+    public String contentType(String fileExt) {
+        String fileType = null;
+        switch (fileExt) {
+            case "html":
+                fileType = "text/html";
+                break;
+            case "css":
+                fileType = "text/css";
+                break;
+            case "js":
+                fileType = "text/js";
+                break;
+            case "jpeg":
+            case "jpg":
+                fileType = "image/jpeg";
+                break;
+            case "png":
+                fileType = "image/png";
+                break;
+            case "gif":
+                fileType = "image/gif";
+                break;
+            default:
+                System.out.println("contentTypeは見つかりませんでした");
+        }
+        return fileType;
+    }
 }
