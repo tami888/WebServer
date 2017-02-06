@@ -1,9 +1,7 @@
 package jp.co.topgate.tami.web;
 
 
-
 import java.io.File;
-
 import java.io.IOException;
 
 
@@ -14,25 +12,33 @@ public class Handler {
         System.out.println("GETハンドルに移行しました");
         System.out.println("requestURIは"+ httpRequest.getRequestURI());
 
+        String requestResource = httpRequest.getRequestResource();
+        String ext = httpRequest.getRequestResourceExtension(requestResource);
+        File file = new File(requestResource);
 
+        System.out.println("リクエストリソースは" + requestResource);
 
-        String userDir;
-        userDir = System.getProperties().getProperty("user.dir");
-        File file =new File(userDir + "/src/main/resource"+ httpRequest.getRequestURI() ); //リクエストURI
-        System.out.println("fileは" + file);
+        ErrorPage errorPage = new ErrorPage();
 
 
         if (file.exists()) {
-            httpResponse.setStatusLine("HTTP/1.1 200 OK");
-            System.out.println(httpResponse.getStatusLine());
+            System.out.println("ファイルを見つけました");
             System.out.println("レスポンスを送ります");
-            httpResponse.response(file);
+            httpResponse.setResponseBody(file);
+            httpResponse.sendResponse(HTTPResponse.message_OK, "OK", ext);
         } else {
-            httpResponse.setStatusLine("HTTP/1.1 404 Not Found");
-            System.out.println(httpResponse.getStatusLine());
-            file =new File(userDir + "/src/main/resource/error.html");
-            httpResponse.responseF(file);
+            System.out.println("ファイルが見つかりませんでした");
+            errorPage.setErrMessage("404 NOT Found");
+            errorPage.writeHTML(httpResponse);
+            httpResponse.sendResponse(HTTPResponse.message_NOT_FOUND, "Not Found", "html");
         }
     }
 
+    public static void handleBadRequest(HTTPResponse httpResponse) throws IOException {
+        System.out.print("エラーページを表示します");
+        ErrorPage errorPage = new ErrorPage();
+        errorPage.setErrMessage("400 Bad Request");
+        errorPage.writeHTML(httpResponse);
+        httpResponse.sendResponse(HTTPResponse.Message_Bad_Request, "Bad Request", "html");
+    }
 }
