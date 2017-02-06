@@ -21,7 +21,7 @@ public class WebServer {
     public void init()throws IOException {
         System.out.println("START Web_Server http://localhost:8080");
 
-        try (ServerSocket serverSocket = new ServerSocket(port);) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
 
             while (true) {
                 //接続要求を待って新しいソケットを作成
@@ -39,21 +39,21 @@ public class WebServer {
                         httpRequest = new HTTPRequest(inputStream);
                         httpResponse = new HTTPResponse(outputStream);
                     } catch (Exception e) {
-//                        handler.handleError(e);
-                        break;
+                        System.err.println("エラー1" + e.getMessage());
                     }
 
                     String requestMethod = httpRequest.getRequestMethod();
 
-                    if (requestMethod != null && requestMethod.equals("GET")) {
+                    if ("GET".equals(requestMethod)) {
                         handler.handleGET(httpRequest, httpResponse);
                     }else{
                         System.out.println("リクエストメソッドが不正です");
+                        handler.handleBadRequest(httpResponse);
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("エラー" + e.getMessage());
+            System.err.println("エラー2" + e.getMessage());
             System.exit(1);
         }
     }
