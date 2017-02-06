@@ -48,11 +48,7 @@ public class WebServer {
                         handler.handleGET(httpRequest, httpResponse);
                     }else{
                         System.out.println("リクエストメソッドが不正です");
-                        ErrorPage errorPage = new ErrorPage();
-                        errorPage.setErrMessage("400 Bad Request");
-                        errorPage.writeHTML(httpRequest, httpResponse);
-                        httpResponse.sendResponse(HTTPResponse.Message_Bad_Request, "Bad Request", "html");
-
+                        handler.handleBadRequest(httpResponse);
                     }
                 }
             }

@@ -29,9 +29,16 @@ public class Handler {
         } else {
             System.out.println("ファイルが見つかりませんでした");
             errorPage.setErrMessage("404 NOT Found");
-            errorPage.writeHTML(httpRequest, httpResponse);
+            errorPage.writeHTML(httpResponse);
             httpResponse.sendResponse(HTTPResponse.message_NOT_FOUND, "Not Found", "html");
         }
     }
 
+    public static void handleBadRequest(HTTPResponse httpResponse) throws IOException {
+        System.out.print("エラーページを表示します");
+        ErrorPage errorPage = new ErrorPage();
+        errorPage.setErrMessage("400 Bad Request");
+        errorPage.writeHTML(httpResponse);
+        httpResponse.sendResponse(HTTPResponse.Message_Bad_Request, "Bad Request", "html");
+    }
 }

@@ -86,8 +86,6 @@ public class HTTPRequest {
 
         }
 
-
-
         System.out.println("要求されているファイルは" + requestResource);
         return requestResource;
 

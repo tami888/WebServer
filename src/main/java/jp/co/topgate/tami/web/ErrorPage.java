@@ -16,7 +16,7 @@ public class ErrorPage {
         this.errMessage = errMessage;
     }
 
-    public void writeHTML(HTTPRequest httpRequest, HTTPResponse httpResponse) throws IOException {
+    public void writeHTML(HTTPResponse httpResponse) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append("<!DOCTYPE html>")
