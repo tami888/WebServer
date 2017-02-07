@@ -29,19 +29,14 @@ public class HTTPRequest {
      */
     public HTTPRequest(InputStream inputStream) {
         this.inputStream = inputStream;
-        this.setHTTPRequestLine();
-        if (requestLine == null) {
-            return;
-        }
-        this.setRequestURI();
-        this.setRequestMethod();
+        this.setHTTPRequest(inputStream);
     }
 
     /**
-     * クライアントからのリクエストから、リクエストラインを抽出してフィールドに設定するメソッド
+     * クライアントからのリクエスト中のリクエストメソッド、リクエストURI、を抽出してフィールドに設定する
      */
-    private void setHTTPRequestLine() {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.inputStream));
+    private void setHTTPRequest(InputStream inputStream) {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             this.requestLine = bufferedReader.readLine();
             System.out.println("リクエストラインは" + requestLine);
@@ -52,27 +47,23 @@ public class HTTPRequest {
             System.err.println("エラー:" + e.getMessage());
             e.printStackTrace();
         }
-    }
 
-    /**
-     * クライアントからのリクエストから、リクエストURIを抽出してフィールドに設定するメソッド
-     */
-    public  void setRequestURI() {
-        int firstEmpty = this.requestLine.indexOf(" ");
-
+        int firstEmpty = this.requestLine.indexOf(" "); // クライアントからのリクエストから、リクエストURIを抽出してフィールドに設定するメソッド
         String secondSentence = this.requestLine.substring(firstEmpty + 1,
                 this.requestLine.indexOf(" ", firstEmpty + 1));
-
         try {
             secondSentence = URLDecoder.decode(secondSentence, "UTF-8");
             this.requestURI = secondSentence;
-            System.out.println("secondSentenceは"+secondSentence);
+            System.out.println("secondSentenceは" + secondSentence);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
+        this.requestMethod = this.requestLine.substring(0, this.requestLine.indexOf(" ")); // リクエストからのリクエストメソッドを抽出してフィールドに設定するメソッド
+        System.out.println("リクエストメソッドは" + this.requestMethod);
 
     }
+
 
     public String getRequestResource() {
         String requestResource;
@@ -101,22 +92,6 @@ public class HTTPRequest {
     }
 
 
-    /**
-     * クライアントからのリクエストから、リクエストメソッドを抽出してフィールドに設定するメソッド
-     */
-    private void setRequestMethod() {
-        this.requestMethod = this.requestLine.substring(0, this.requestLine.indexOf(" "));
-        System.out.println("リクエストメソッドは" + this.requestMethod);
-    }
-
-    /**
-     * リクエストラインを返すメソッド
-     *
-     * @return リクエストラインを返す
-     */
-    public String getRequestLine() {
-        return this.requestLine;
-    }
 
     /**
      * リクエストメソッドを返すメソッド

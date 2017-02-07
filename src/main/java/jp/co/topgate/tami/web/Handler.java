@@ -34,10 +34,9 @@ public class Handler {
         }
     }
 
-    public static void handleBadRequest(HTTPResponse httpResponse) throws IOException {
+    public static void handleErr(HTTPResponse httpResponse) throws IOException {
         System.out.print("エラーページを表示します");
         ErrorPage errorPage = new ErrorPage();
-        errorPage.setErrMessage("400 Bad Request");
         errorPage.writeHTML(httpResponse);
         httpResponse.sendResponse(HTTPResponse.Message_Bad_Request, "Bad Request", "html");
     }
