@@ -30,7 +30,7 @@ public class ErrorPage {
                 .append("</body>");
 
 
-        httpResponse.setDynamicResponseBody(new String(stringBuilder).getBytes());
+        httpResponse.setErrResponseBody(new String(stringBuilder).getBytes());
     }
 
 
