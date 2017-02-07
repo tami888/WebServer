@@ -30,10 +30,6 @@ public class HTTPRequest {
     public HTTPRequest(InputStream inputStream) {
         this.inputStream = inputStream;
         this.setHTTPRequest(inputStream);
-        if (requestLine == null) {
-            return;
-        }
-
     }
 
     /**

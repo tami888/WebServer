@@ -41,7 +41,7 @@ public class HTTPResponse {
     /**
      * 動的なレスポンスボディ
      */
-    private byte[] dynamicResponseBody;
+    private byte[] errResponseBody;
 
     /**
      * レスポンスボディ
@@ -51,8 +51,8 @@ public class HTTPResponse {
     /**
      * 動的レスポンスボディ
      */
-    public void setDynamicResponseBody(byte[] responseBody) {
-        this.dynamicResponseBody = responseBody;
+    public void setErrResponseBody(byte[] responseBody) {
+        this.errResponseBody = responseBody;
     }
 
     /**
@@ -62,45 +62,41 @@ public class HTTPResponse {
         this.ResponseBody = file;
     }
 
-
-//ダイナミックレスポンスボディとレスポンスボディで分けなくてもよろしいのでは？
-
+    /**
+     * レスポンスを送るメソッド
+     */
     public void sendResponse(int message, String causing, String fileEx) throws IOException {
 
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+        FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
+        DataHandler dataHandler = new DataHandler(fileDataSource);
+        byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentTypeExt(fileEx) + "\n").getBytes();
+        dataOutputStream.write(responseHead);
 
-        if (this.dynamicResponseBody != null) {
-            // 引数で受け取ったステータスラインとレスポンスヘッダを結合
-            byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentTypeExt(fileEx) + "\n").getBytes();
-            dataOutputStream.write(responseHead);
-            dataOutputStream.write(this.dynamicResponseBody);
-            dataOutputStream.flush();
-            dataOutputStream.close();
+        if (this.errResponseBody != null) {
+            dataOutputStream.write(this.errResponseBody);
         } else {
-            FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
-            DataHandler dataHandler = new DataHandler(fileDataSource);
-            byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentTypeExt(fileEx) + "\n").getBytes();
-            dataOutputStream.write(responseHead);
             dataHandler.writeTo(dataOutputStream);
-            dataOutputStream.flush();
-            dataOutputStream.close();
         }
+        dataOutputStream.flush();
+        dataOutputStream.close();
     }
+
+    //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
+    //sendResponseの処理に同じ処理があるため一つにまとめる、バグ対策のため
+    //setterとgetterの慣習に則ていないものがある
+    //sendResponseのテストを書く
+    //ハンドラーのテストも書いたほうが良さげ
+    //InputStreamやOutputStreamを避けている節がある。
 
     public String contentTypeExt(String fileEx) {
         String fileType = contentType(fileEx);
         return "Content-Type: " + fileType + "\n";
     }
 
-
-    //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
-    //setterとgetterの慣習に則っていない
-    //sendResponseのテストを書く
-    //ハンドラーのテストも書いたほうが良さげ
-    //InputStreamやOutputStreamを避けている節がある。
-    public String contentType(String fileExt) {
+    public String contentType(String file) {
         String fileType = null;
-        switch (fileExt) {
+        switch (file) {
             case "html":
                 fileType = "text/html";
                 break;
