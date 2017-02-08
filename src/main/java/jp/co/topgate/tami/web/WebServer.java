@@ -33,30 +33,27 @@ public class WebServer {
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
 
-                    HTTPRequest httpRequest = null;
-                    HTTPResponse httpResponse = null;
-
-                    try {
-                        httpRequest = new HTTPRequest(inputStream);
-                        httpResponse = new HTTPResponse(outputStream);
-                    } catch (Exception e) {
-                        System.err.println("Error" + e.getMessage());
-                        e.printStackTrace();
-                    }
+                    HTTPRequest httpRequest = new HTTPRequest(inputStream);
+                    HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
                     String requestMethod = httpRequest.getRequestMethod();
 
                     if ("GET".equals(requestMethod)) {
-                        handler.handleGET(httpRequest, httpResponse);
-                    } else {
-                        System.out.println("リクエストメソッドが不正です");
-                        errorPage.setErrMessage("400 Bad Request");
-                        handler.handleErr(httpResponse);
+                        try {
+                            handler.handleGET(httpRequest, httpResponse);
+                        } catch (Exception e) {
+                            System.err.println("エラー:" + e.getMessage());
+                            e.printStackTrace();
+
+                            System.out.println("リクエストメソッドが不正です");
+                            errorPage.setErrorMessage("400 Bad Request");
+                            handler.handleError(httpResponse);
+                        }
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("エラー2" + e.getMessage());
+            System.err.println("エラー" + e.getMessage());
             System.exit(1);
         }
     }

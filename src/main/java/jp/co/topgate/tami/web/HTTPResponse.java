@@ -26,10 +26,6 @@ public class HTTPResponse {
      * 該当のページが存在しない時
      */
     public static final int message_NOT_FOUND = 404;
-    /**
-     * 許可されていないメソッドタイプのリクエストを受けた。
-     */
-    public static final int message_METHOD_Not_ALLOWED = 405;
 
     /**
      * コンストラクタ
@@ -70,7 +66,7 @@ public class HTTPResponse {
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
         FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
         DataHandler dataHandler = new DataHandler(fileDataSource);
-        byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.contentTypeExt(fileEx) + "\n").getBytes();
+        byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.createContentTypeHeader(fileEx) + "\n").getBytes();
         dataOutputStream.write(responseHead);
 
         if (this.errResponseBody != null) {
@@ -88,13 +84,16 @@ public class HTTPResponse {
     //sendResponseのテストを書く
     //ハンドラーのテストも書いたほうが良さげ
     //InputStreamやOutputStreamを避けている節がある。
+    //メソッド名は動詞を入れることが原則、メソッド名を見てすぐ挙動が理解しやすいように工夫する。
+    //メソッドを追加したならそのテストも書かないと追加した意味がない
+    //Errとかの略語はあまり使用しない。場所によって使い分けること
 
-    public String contentTypeExt(String fileEx) {
-        String fileType = contentType(fileEx);
+    public String createContentTypeHeader(String fileExtension) {
+        String fileType = createContentType(fileExtension);
         return "Content-Type: " + fileType + "\n";
     }
 
-    public String contentType(String file) {
+    public String createContentType(String file) {
         String fileType = null;
         switch (file) {
             case "html":

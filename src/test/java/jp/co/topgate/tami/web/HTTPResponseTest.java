@@ -16,19 +16,32 @@ public class HTTPResponseTest {
     private OutputStream outputStream = new ByteArrayOutputStream();
     private HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
+
     @Test
-    public void testContentType(){
+    public void testCreateContentTypeHeader() {
+        String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
+        String expectedContents[] = {"Content-Type: text/html\n", "Content-Type: text/css\n", "Content-Type: text/js\n", "Content-Type: image/jpeg\n", "Content-Type: image/png\n", "Content-Type: image/gif\n"};
+
+        for (int i = 0; i < fileExt.length; i++) {
+
+            String file = fileExt[i];
+
+            assertThat(expectedContents[i], is(httpResponse.createContentTypeHeader(file)));
+        }
+    }
+
+    @Test
+    public void testCreateContentType() {
         String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
         String expectedContents[] = {"text/html", "text/css", "text/js", "image/jpeg", "image/png", "image/gif"};
 
         for (int i = 0; i < fileExt.length; i++) {
 
-            String file =  fileExt[i];
+            String file = fileExt[i];
 
-            assertThat(expectedContents[i], is(httpResponse.contentType(file)));
+            assertThat(expectedContents[i], is(httpResponse.createContentType(file)));
         }
     }
-
 
     @Test
     public void sendResponse() {
