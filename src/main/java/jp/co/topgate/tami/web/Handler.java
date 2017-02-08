@@ -28,13 +28,13 @@ public class Handler {
             httpResponse.sendResponse(HTTPResponse.message_OK, "OK", ext);
         } else {
             System.out.println("ファイルが見つかりませんでした");
-            errorPage.setErrMessage("404 NOT Found");
+            errorPage.setErrorMessage("404 NOT Found");
             errorPage.writeHTML(httpResponse);
             httpResponse.sendResponse(HTTPResponse.message_NOT_FOUND, "Not Found", "html");
         }
     }
 
-    public static void handleErr(HTTPResponse httpResponse) throws IOException {
+    public static void handleError(HTTPResponse httpResponse) throws IOException {
         System.out.print("エラーページを表示します");
         ErrorPage errorPage = new ErrorPage();
         errorPage.writeHTML(httpResponse);

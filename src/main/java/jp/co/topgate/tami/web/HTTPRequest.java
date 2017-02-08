@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.URLDecoder;
 
 public class HTTPRequest {
-
     /**
      * クライアントからのsocket通信の中身を格納するための変数
      */
@@ -21,8 +20,6 @@ public class HTTPRequest {
      * クライアントからのリクエストURI
      */
     private String requestURI;
-    // private String queryString;
-
     /**
      * コンストラクタ、set~で各フィールドを初期設定する
      *
@@ -35,7 +32,7 @@ public class HTTPRequest {
     /**
      * クライアントからのリクエスト中のリクエストメソッド、リクエストURI、を抽出してフィールドに設定する
      */
-    private void setHTTPRequest(InputStream inputStream) {
+    public void setHTTPRequest(InputStream inputStream) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             this.requestLine = bufferedReader.readLine();
@@ -91,8 +88,6 @@ public class HTTPRequest {
         return extension;
     }
 
-
-
     /**
      * リクエストメソッドを返すメソッド
      *
@@ -110,6 +105,5 @@ public class HTTPRequest {
     public String getRequestURI() {
         return this.requestURI;
     }
-
 
 }
