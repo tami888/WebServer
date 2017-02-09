@@ -2,10 +2,7 @@ package jp.co.topgate.tami.web;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 
 public class HTTPResponse {
@@ -18,10 +15,12 @@ public class HTTPResponse {
      * リクエストが成功した場合のコード
      */
     public static final int message_OK = 200;
+
     /**
      * リクエストにエラーがあります
      */
     public static final int Message_Bad_Request = 400;
+
     /**
      * 該当のページが存在しない時
      */
@@ -34,49 +33,50 @@ public class HTTPResponse {
         this.outputStream = outputStream;
     }
 
-    /**
-     * 動的なレスポンスボディ
-     */
-    private byte[] errResponseBody;
 
     /**
      * レスポンスボディ
      */
-    private File ResponseBody;
-
-    /**
-     * 動的レスポンスボディ
-     */
-    public void setErrResponseBody(byte[] responseBody) {
-        this.errResponseBody = responseBody;
-    }
+    private byte[] responseBody;
 
     /**
      * レスポンスボディを設定するメソッド
      */
-    public void setResponseBody(File file){
-        this.ResponseBody = file;
+    void setResponseBody(byte[] responseBody) {
+        this.responseBody = responseBody;
     }
 
     /**
-     * レスポンスを送るメソッド
+     * レスポンスボディを送るメソッド
      */
-    public void sendResponse(int message, String causing, String fileEx) throws IOException {
-
+    void sendResponse(int message, String causing, String fileEx ) throws IOException {
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        FileDataSource fileDataSource = new FileDataSource(this.ResponseBody);
-        DataHandler dataHandler = new DataHandler(fileDataSource);
         byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.createContentTypeHeader(fileEx) + "\n").getBytes();
         dataOutputStream.write(responseHead);
-
-        if (this.errResponseBody != null) {
-            dataOutputStream.write(this.errResponseBody);
-        } else {
-            dataHandler.writeTo(dataOutputStream);
-        }
+        dataOutputStream.write(this.responseBody);
         dataOutputStream.flush();
         dataOutputStream.close();
     }
+
+    /**
+     * ファイルを読み込むメソッド
+     */
+    void readFile(String fileName) throws IOException {
+        FileInputStream fis = new FileInputStream(fileName);
+        BufferedInputStream bi = new BufferedInputStream(fis);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        int tmp = 0;
+        while ((tmp = bi.read()) != -1) {
+            byteArrayOutputStream.write(tmp);
+
+        }
+        bi.close();
+        byte[] sss = byteArrayOutputStream.toByteArray();
+        setResponseBody(sss);
+    }
+
 
     //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
     //sendResponseの処理に同じ処理があるため一つにまとめる、バグ対策のため
@@ -87,13 +87,14 @@ public class HTTPResponse {
     //メソッド名は動詞を入れることが原則、メソッド名を見てすぐ挙動が理解しやすいように工夫する。
     //メソッドを追加したならそのテストも書かないと追加した意味がない
     //Errとかの略語はあまり使用しない。場所によって使い分けること
+    //設計思想を明確にしておかないと課題が通らない
 
-    public String createContentTypeHeader(String fileExtension) {
+    String createContentTypeHeader(String fileExtension) {
         String fileType = createContentType(fileExtension);
         return "Content-Type: " + fileType + "\n";
     }
 
-    public String createContentType(String file) {
+    String createContentType(String file) {
         String fileType = null;
         switch (file) {
             case "html":

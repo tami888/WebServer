@@ -5,10 +5,6 @@ import java.net.URLDecoder;
 
 public class HTTPRequest {
     /**
-     * クライアントからのsocket通信の中身を格納するための変数
-     */
-    private InputStream inputStream;
-    /**
      * クライアントからのリクエストライン
      */
     private String requestLine;
@@ -24,21 +20,24 @@ public class HTTPRequest {
      * コンストラクタ、set~で各フィールドを初期設定する
      *
      */
-    public HTTPRequest(InputStream inputStream) {
-        this.inputStream = inputStream;
-        this.setHTTPRequest(inputStream);
+    HTTPRequest(InputStream inputStream) {
+        this.setHTTPRequest(inputStream );
     }
+
 
     /**
      * クライアントからのリクエスト中のリクエストメソッド、リクエストURI、を抽出してフィールドに設定する
      */
-    public void setHTTPRequest(InputStream inputStream) {
+    void setHTTPRequest(InputStream inputStream ) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
         try {
             this.requestLine = bufferedReader.readLine();
             System.out.println("リクエストラインは" + requestLine);
             if (requestLine == null) {
                 System.out.println("リクエストラインがありません");
+
+
             }
         } catch (IOException e) {
             System.err.println("エラー:" + e.getMessage());
@@ -62,14 +61,14 @@ public class HTTPRequest {
     }
 
 
-    public String getRequestResource() {
+    String getRequestResource() {
         String requestResource;
         if ((this.getRequestURI().endsWith("/")) || !(this.getRequestURI().substring(this.getRequestURI().lastIndexOf("/"), this.getRequestURI().length()).contains("."))) {
             requestResource = "src/main/resource" + this.getRequestURI() + "index.html";
         } else {
             requestResource = "src/main/resource" + this.getRequestURI();
         }
-        if (requestResource.indexOf("?") != -1) {
+        if (requestResource.contains("?")) {
             requestResource = requestResource.substring(requestResource.indexOf(""), requestResource.lastIndexOf("?"));
 
         }
@@ -79,7 +78,7 @@ public class HTTPRequest {
 
     }
 
-    public String getRequestResourceExtension(String requestResource) {
+    String getRequestResourceExtension(String requestResource) {
 
         String extension = requestResource.substring(requestResource.lastIndexOf(".") + 1,
                 requestResource.lastIndexOf(""));
@@ -93,7 +92,7 @@ public class HTTPRequest {
      *
      * @return リクエストメソッドを返す
      */
-    public String getRequestMethod() {
+    String getRequestMethod() {
         return this.requestMethod;
     }
 
@@ -102,7 +101,7 @@ public class HTTPRequest {
      *
      * @return リクエストURIを返す
      */
-    public String getRequestURI() {
+    String getRequestURI() {
         return this.requestURI;
     }
 
