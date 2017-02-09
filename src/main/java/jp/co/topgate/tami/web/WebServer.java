@@ -28,7 +28,6 @@ public class WebServer {
                     System.out.println("リクエストを待っています");
 
                     Handler handler = new Handler();
-                    ErrorPage errorPage = new ErrorPage();
 
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
@@ -46,6 +45,7 @@ public class WebServer {
                             e.printStackTrace();
 
                             System.out.println("リクエストメソッドが不正です");
+                            ErrorPage errorPage = new ErrorPage();
                             errorPage.setErrorMessage("400 Bad Request");
                             handler.handleError(httpResponse);
                         }
