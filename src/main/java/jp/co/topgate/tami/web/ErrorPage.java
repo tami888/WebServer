@@ -12,11 +12,12 @@ public class ErrorPage {
     /**
      * エラーメッセージをセットするメソッド
      */
-    public void setErrorMessage(String errorMessage) {
+    void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    public void writeHTML(HTTPResponse httpResponse) throws IOException {
+    void writeHTML(HTTPResponse httpResponse) throws IOException {
+
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append("<!DOCTYPE html>")
@@ -29,6 +30,6 @@ public class ErrorPage {
                 .append("<p>" + this.errorMessage + "</p>")
                 .append("</body>");
 
-        httpResponse.setErrResponseBody(new String(stringBuilder).getBytes());
+        httpResponse.setResponseBody(new String(stringBuilder).getBytes());
     }
 }

@@ -48,7 +48,7 @@ public class HTTPResponseTest {
         OutputStream outputStream = new ByteArrayOutputStream();
         HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
-        httpResponse.setErrResponseBody("レスポンスボディ".getBytes());
+        httpResponse.setResponseBody("レスポンスボディ".getBytes());
         try {
             httpResponse.sendResponse(HTTPResponse.message_OK, "OK", "html");
         } catch (IOException e) {

@@ -13,18 +13,18 @@ public class Handler {
         System.out.println("requestURIは"+ httpRequest.getRequestURI());
 
         String requestResource = httpRequest.getRequestResource();
-        String ext = httpRequest.getRequestResourceExtension(requestResource);
         File file = new File(requestResource);
 
         System.out.println("リクエストリソースは" + requestResource);
 
         ErrorPage errorPage = new ErrorPage();
 
-
         if (file.exists()) {
             System.out.println("ファイルを見つけました");
             System.out.println("レスポンスを送ります");
-            httpResponse.setResponseBody(file);
+//            httpResponse.setResponseBody(file);
+            String ext = httpRequest.getRequestResourceExtension(requestResource);
+            httpResponse.readFile(requestResource);
             httpResponse.sendResponse(HTTPResponse.message_OK, "OK", ext);
         } else {
             System.out.println("ファイルが見つかりませんでした");
@@ -33,6 +33,7 @@ public class Handler {
             httpResponse.sendResponse(HTTPResponse.message_NOT_FOUND, "Not Found", "html");
         }
     }
+
 
     public static void handleError(HTTPResponse httpResponse) throws IOException {
         System.out.print("エラーページを表示します");
