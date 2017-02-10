@@ -74,8 +74,7 @@ public class HTTPResponse {
         byte[] body = byteArrayOutputStream.toByteArray();
         setResponseBody(body);
     }
-
-
+    
     //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
     //sendResponseの処理に同じ処理があるため一つにまとめる、バグ対策のため
     //setterとgetterの慣習に則ていないものがある
