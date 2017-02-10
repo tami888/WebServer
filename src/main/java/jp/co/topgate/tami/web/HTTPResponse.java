@@ -1,7 +1,5 @@
 package jp.co.topgate.tami.web;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import java.io.*;
 
 
@@ -14,17 +12,17 @@ public class HTTPResponse {
     /**
      * リクエストが成功した場合のコード
      */
-    public static final int message_OK = 200;
-
-    /**
-     * リクエストにエラーがあります
-     */
-    public static final int Message_Bad_Request = 400;
+    static final int MESSAGE_OK = 200;
 
     /**
      * 該当のページが存在しない時
      */
-    public static final int message_NOT_FOUND = 404;
+    static final int MESSAGE_NOT_FOUND = 404;
+
+    /**
+     * サーバー内部エラーの時
+     */
+    static final int INTERNAL_SERVER_ERROR = 500;
 
     /**
      * コンストラクタ
@@ -49,9 +47,9 @@ public class HTTPResponse {
     /**
      * レスポンスボディを送るメソッド
      */
-    void sendResponse(int message, String causing, String fileEx ) throws IOException {
+    void sendResponse(int statusCode, String fileEx) throws IOException {
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        byte[] responseHead = ("HTTP/1.1 " + message + " " + causing + "\n" + this.createContentTypeHeader(fileEx) + "\n").getBytes();
+        byte[] responseHead = ("HTTP/1.1 " + statusCode + " " + createReasonPhrase(statusCode) + "\n" + this.createContentTypeHeader(fileEx) + "\n").getBytes();
         dataOutputStream.write(responseHead);
         dataOutputStream.write(this.responseBody);
         dataOutputStream.flush();
@@ -73,10 +71,9 @@ public class HTTPResponse {
 
         }
         bi.close();
-        byte[] sss = byteArrayOutputStream.toByteArray();
-        setResponseBody(sss);
+        byte[] body = byteArrayOutputStream.toByteArray();
+        setResponseBody(body);
     }
-
 
     //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
     //sendResponseの処理に同じ処理があるため一つにまとめる、バグ対策のため
@@ -87,7 +84,30 @@ public class HTTPResponse {
     //メソッド名は動詞を入れることが原則、メソッド名を見てすぐ挙動が理解しやすいように工夫する。
     //メソッドを追加したならそのテストも書かないと追加した意味がない
     //Errとかの略語はあまり使用しない。場所によって使い分けること
-    //設計思想を明確にしておかないと課題が通らない
+    //causingをわざわざ指定するのは意味がないのでは
+    //javaの定数の命名規則に合致していないものがある
+    //設計思想を明確にしていない部分が多々ある
+
+    String createReasonPhrase(int statusCode) {
+        String phrase = null;
+        switch (statusCode) {
+            case 200:
+                phrase = "OK";
+                break;
+            case 400:
+                phrase = "Bad Request";
+                break;
+            case 404:
+                phrase = "Not Found";
+                break;
+            case 500:
+                phrase = "Internal Server Error";
+                break;
+            default:
+                System.out.println("reasonPhraseは見つかりませんでした");
+        }
+        return phrase;
+    }
 
     String createContentTypeHeader(String fileExtension) {
         String fileType = createContentType(fileExtension);
