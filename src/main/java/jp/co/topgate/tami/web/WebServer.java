@@ -27,15 +27,24 @@ public class WebServer {
                 try (Socket socket = serverSocket.accept()) {
                     System.out.println("リクエストを待っています");
 
-                    Handler handler = new Handler();
+
 
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
-
-                    HTTPRequest httpRequest = new HTTPRequest(inputStream);
                     HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
+                    HTTPRequest httpRequest;
+                    try {
+                        httpRequest = new HTTPRequest(inputStream);
+                    } catch (Exception e) {
+                        ErrorPage errorPage = new ErrorPage();
+                        errorPage.writeHTML(httpResponse);
+                        e.printStackTrace();
+                        continue;
+                    }
+
                     String requestMethod = httpRequest.getRequestMethod();
+                    Handler handler = new Handler();
 
                     if ("GET".equals(requestMethod)) {
                         try {
@@ -46,8 +55,8 @@ public class WebServer {
 
                             System.out.println("リクエストメソッドが不正です");
                             ErrorPage errorPage = new ErrorPage();
-                            errorPage.setErrorMessage("400 Bad Request");
-                            handler.handleError(httpResponse);
+                            errorPage.setErrorMessage("500 Internal Server Error");
+                            handler.handleError(httpRequest, httpResponse);
                         }
                     }
                 }

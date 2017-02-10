@@ -44,13 +44,13 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void sendResponse() {
+    public void testSendResponse() {
         OutputStream outputStream = new ByteArrayOutputStream();
         HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
         httpResponse.setResponseBody("レスポンスボディ".getBytes());
         try {
-            httpResponse.sendResponse(HTTPResponse.message_OK, "OK", "html");
+            httpResponse.sendResponse(HTTPResponse.MESSAGE_OK, "html");
         } catch (IOException e) {
             System.err.println("エラー:" + e.getMessage());
             e.printStackTrace();
@@ -79,5 +79,18 @@ public class HTTPResponseTest {
 
         assertThat((new String(stringBuilder)), is("HTTP/1.1 200 OKContent-Type: text/htmlレスポンスボディ"));
 
+    }
+
+    @Test
+    public void testCreateReasonPhrase() {
+        int statusCode[] = {200, 400, 404, 500};
+        String expectedContents[] = {"OK", "Bad Request", "Not Found", "Internal Server Error"};
+
+        for (int i = 0; i < statusCode.length; i++) {
+
+            int code = statusCode[i];
+
+            assertThat(expectedContents[i], is(httpResponse.createReasonPhrase(code)));
+        }
     }
 }
