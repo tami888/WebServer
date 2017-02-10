@@ -1,12 +1,11 @@
 package jp.co.topgate.tami.web;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.StringTokenizer;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class HTTPRequestTest {
 
@@ -30,7 +29,7 @@ public class HTTPRequestTest {
      * getRequestMethodメソッドをテストするメソッド
      */
     @Test
-    public void testGetRequestMethod() {
+    public void testGetRequestMethod() throws Exception {
         for (int i = 0; i < socketContentsArray.length; i++) {
             InputStream inputStream = new ByteArrayInputStream(socketContentsArray[i].getBytes());
             HTTPRequest httpRequest = new HTTPRequest(inputStream);
@@ -44,7 +43,7 @@ public class HTTPRequestTest {
      * getRequestURIメソッドをテストするメソッド
      */
     @Test
-    public void testGetRequestURI() {
+    public void testGetRequestURI() throws Exception {
 
         String expectedRequestURI = "/index.html";
         String expectedRequestURI2 = "/.sample/sample.html";
@@ -62,5 +61,4 @@ public class HTTPRequestTest {
         }
 
     }
-
 }

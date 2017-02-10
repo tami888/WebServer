@@ -15,7 +15,6 @@ public class ErrorPage {
     void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
-
     void writeHTML(HTTPResponse httpResponse) throws IOException {
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -29,6 +28,7 @@ public class ErrorPage {
                 .append("<body>")
                 .append("<p>" + this.errorMessage + "</p>")
                 .append("</body>");
+
 
         httpResponse.setResponseBody(new String(stringBuilder).getBytes());
     }
