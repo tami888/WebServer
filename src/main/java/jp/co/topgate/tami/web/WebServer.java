@@ -38,14 +38,13 @@ public class WebServer {
                         httpRequest = new HTTPRequest(inputStream);
                     } catch (Exception e) {
                         ErrorPage errorPage = new ErrorPage();
-                        errorPage.writeHTML(httpResponse);
+                        errorPage.setErrorMessage("400 Bad Request");
                         e.printStackTrace();
                         continue;
                     }
 
                     String requestMethod = httpRequest.getRequestMethod();
                     Handler handler = new Handler();
-
                     if ("GET".equals(requestMethod)) {
                         try {
                             handler.handleGET(httpRequest, httpResponse);
@@ -58,6 +57,10 @@ public class WebServer {
                             errorPage.setErrorMessage("500 Internal Server Error");
                             handler.handleError(httpRequest, httpResponse);
                         }
+                    } else {
+                        ErrorPage errorPage = new ErrorPage();
+                        errorPage.setErrorMessage("400 Bad Request");
+                        handler.handleError(httpRequest, httpResponse);
                     }
                 }
             }

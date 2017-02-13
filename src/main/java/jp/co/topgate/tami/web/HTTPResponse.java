@@ -1,6 +1,9 @@
 package jp.co.topgate.tami.web;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 
 public class HTTPResponse {
@@ -9,6 +12,7 @@ public class HTTPResponse {
      * クライアントとのsocketを格納したOutputStream
      */
     private OutputStream outputStream;
+
     /**
      * リクエストが成功した場合のコード
      */
@@ -49,31 +53,36 @@ public class HTTPResponse {
      */
     void sendResponse(int statusCode, String fileEx) throws IOException {
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        byte[] responseHead = ("HTTP/1.1 " + statusCode + " " + createReasonPhrase(statusCode) + "\n" + this.createContentTypeHeader(fileEx) + "\n").getBytes();
-        dataOutputStream.write(responseHead);
+        byte[] statusLine = ("HTTP/1.1 " + statusCode + " " + createReasonPhrase(statusCode) + "\n").getBytes();
+        byte[] entityHeader = (createEntityHeader(fileEx).getBytes());
+        dataOutputStream.write(statusLine);
+        dataOutputStream.write(entityHeader);
         dataOutputStream.write(this.responseBody);
         dataOutputStream.flush();
         dataOutputStream.close();
     }
 
     /**
-     * ファイルを読み込むメソッド
+     * Content-TypeやContent-Length等のエンティティを設定するメソッド
      */
-    void readFile(String fileName) throws IOException {
-        FileInputStream fis = new FileInputStream(fileName);
-        BufferedInputStream bi = new BufferedInputStream(fis);
+    String createEntityHeader(String fileEx) {
+        String contentLength = "";
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        int tmp = 0;
-        while ((tmp = bi.read()) != -1) {
-            byteArrayOutputStream.write(tmp);
-
-        }
-        bi.close();
-        byte[] body = byteArrayOutputStream.toByteArray();
-        setResponseBody(body);
+        return this.createContentTypeHeader(fileEx) + "\n" + contentLength;
     }
+
+
+    void makeResponseBody(File requestResource, HTTPResponse httpResponse) throws IOException {
+        byte[] body = null;
+
+        if (requestResource.exists()) {
+            body = Files.readFile(requestResource);
+        } else {
+            body = ErrorPage.writeHTML();
+        }
+        httpResponse.setResponseBody(body);
+    }
+
 
     //htmlと入力したら意図するものはtext/htmlでありContent-Type: text/htmlではない
     //sendResponseの処理に同じ処理があるため一つにまとめる、バグ対策のため
@@ -87,6 +96,8 @@ public class HTTPResponse {
     //causingをわざわざ指定するのは意味がないのでは
     //javaの定数の命名規則に合致していないものがある
     //設計思想を明確にしていない部分が多々ある
+    //拡張子でもcontentTypeの判別はいいんだけどcontentTypeだけをレスポンスヘッダーに入れるのではなく新たに発生するcontentLengthなどを入れるメソッドを一つ、それを再構築するメソッドを一つとメソッドを分けて行うことが望ましい。それによって新しいものが追加された場合でも再利用ができる。今のコードはcontentTypeのためだけのメソッドであるため再利用性が悪い
+
 
     String createReasonPhrase(int statusCode) {
         String phrase = null;

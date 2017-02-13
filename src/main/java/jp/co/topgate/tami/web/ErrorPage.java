@@ -1,5 +1,6 @@
 package jp.co.topgate.tami.web;
 
+
 import java.io.IOException;
 
 
@@ -7,15 +8,15 @@ public class ErrorPage {
     /**
      * エラーメッセージを受け取るフィールド
      */
-    private String errorMessage;
+    static String errorMessage;
 
     /**
      * エラーメッセージをセットするメソッド
      */
     void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+        ErrorPage.errorMessage = errorMessage;
     }
-    void writeHTML(HTTPResponse httpResponse) throws IOException {
+    static byte[] writeHTML() throws IOException {
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -26,10 +27,10 @@ public class ErrorPage {
                 .append("<title>エラー</title>")
                 .append("</head>")
                 .append("<body>")
-                .append("<p>" + this.errorMessage + "</p>")
+                .append("<p>" + errorMessage + "</p>")
                 .append("</body>");
 
-
-        httpResponse.setResponseBody(new String(stringBuilder).getBytes());
+        byte[] Body = (new String(stringBuilder).getBytes());
+        return Body;
     }
 }
