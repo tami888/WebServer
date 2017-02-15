@@ -16,7 +16,7 @@ public class HTTPResponseTest {
 
 
     @Test
-    public void CreateContentTypeHeaderでcontentTypeのヘッダーを取得する() {
+    public void createContentTypeHeaderでcontentTypeのヘッダーを取得する() {
         String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
         String expectedContents[] = {"Content-Type: text/html\n", "Content-Type: text/css\n", "Content-Type: text/js\n", "Content-Type: image/jpeg\n", "Content-Type: image/png\n", "Content-Type: image/gif\n"};
 
@@ -29,7 +29,7 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void CreateContentTypeで与えられたファイル拡張子のcontentTypeを判別する() {
+    public void createContentTypeで与えられたファイル拡張子のcontentTypeを判別する() {
         String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
         String expectedContents[] = {"text/html", "text/css", "text/js", "image/jpeg", "image/png", "image/gif"};
 
@@ -42,7 +42,7 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void SendResponseで与えられたレスポンスボディを送る() {
+    public void sendResponseで与えられたレスポンスボディを送る() {
         OutputStream outputStream = new ByteArrayOutputStream();
         HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
@@ -80,7 +80,7 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void CreateReasonPhraseでstatusCodeからreasonPhraseを取得する() {
+    public void createReasonPhraseでstatusCodeからreasonPhraseを取得する() {
         int statusCode[] = {200, 400, 404, 500};
         String actual[] = {"OK", "Bad Request", "Not Found", "Internal Server Error"};
 

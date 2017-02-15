@@ -29,7 +29,7 @@ public class HTTPRequestTest {
      * getRequestMethodメソッドをテストするメソッド
      */
     @Test
-    public void testGetRequestMethod() throws Exception {
+    public void getRequestMethodでinputStreamからリクエストメソッドを取得() throws Exception {
         for (int i = 0; i < socketContentsArray.length; i++) {
             InputStream inputStream = new ByteArrayInputStream(socketContentsArray[i].getBytes());
             HTTPRequest httpRequest = new HTTPRequest(inputStream);
@@ -43,7 +43,7 @@ public class HTTPRequestTest {
      * getRequestURIメソッドをテストするメソッド
      */
     @Test
-    public void testGetRequestURI() throws Exception {
+    public void getRequestURIでパスが与えたときリクエストURIを取得() throws Exception {
 
         String expectedRequestURI = "/index.html";
         String expectedRequestURI2 = "/.sample/sample.html";
