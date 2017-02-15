@@ -49,6 +49,13 @@ public class HTTPResponse {
     }
 
     /**
+     * レスポンスボディを取得するメソッド
+     */
+    byte[] getResponseBody() {
+        return this.responseBody;
+    }
+
+    /**
      * レスポンスボディを送るメソッド
      */
     void sendResponse(int statusCode, String fileEx) throws IOException {
@@ -66,21 +73,25 @@ public class HTTPResponse {
      * Content-TypeやContent-Length等のエンティティを設定するメソッド
      */
     String createEntityHeader(String fileEx) {
-        String contentLength = "";
+        //createAllow()
+        //createContentEncoding()
+        //createContentLength()
 
-        return this.createContentTypeHeader(fileEx) + "\n" + contentLength;
+        return createContentTypeHeader(fileEx) + "\n";
     }
 
-
-    void makeResponseBody(File requestResource, HTTPResponse httpResponse) throws IOException {
-        byte[] body = null;
+    /**
+     * レスポンスボディを生成するメソッド
+     */
+    void makeResponseBody(File requestResource) throws IOException {
+        byte[] body;
 
         if (requestResource.exists()) {
             body = Files.readFile(requestResource);
         } else {
             body = ErrorPage.writeHTML();
         }
-        httpResponse.setResponseBody(body);
+        setResponseBody(body);
     }
 
 
@@ -96,7 +107,7 @@ public class HTTPResponse {
     //causingをわざわざ指定するのは意味がないのでは
     //javaの定数の命名規則に合致していないものがある
     //設計思想を明確にしていない部分が多々ある
-    //拡張子でもcontentTypeの判別はいいんだけどcontentTypeだけをレスポンスヘッダーに入れるのではなく新たに発生するcontentLengthなどを入れるメソッドを一つ、それを再構築するメソッドを一つとメソッドを分けて行うことが望ましい。それによって新しいものが追加された場合でも再利用ができる。今のコードはcontentTypeのためだけのメソッドであるため再利用性が悪い
+    //拡張子でもcontentTypeの判別は良いがcontentTypeだけをレスポンスヘッダーに入れるのではなく新たに発生するcontentLengthなどを入れるメソッドを一つ、それを再構築するメソッドを一つとメソッドを分けて行うことが望ましい。それによって新しいものが追加された場合でも再利用ができる。今のコードはcontentTypeのためだけのメソッドであるため再利用性が悪い
 
 
     String createReasonPhrase(int statusCode) {

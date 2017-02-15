@@ -28,7 +28,6 @@ public class WebServer {
                     System.out.println("リクエストを待っています");
 
 
-
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
                     HTTPResponse httpResponse = new HTTPResponse(outputStream);
@@ -48,7 +47,7 @@ public class WebServer {
                     if ("GET".equals(requestMethod)) {
                         try {
                             handler.handleGET(httpRequest, httpResponse);
-                        } catch (Exception e) {
+                        } catch (IOException e) {
                             System.err.println("エラー:" + e.getMessage());
                             e.printStackTrace();
 

@@ -18,13 +18,13 @@ class Handler {
         if (requestResource.exists()) {
             System.out.println("ファイルを見つけました");
             System.out.println("レスポンスを送ります");
-            httpResponse.makeResponseBody(requestResource, httpResponse);
+            httpResponse.makeResponseBody(requestResource);
             httpResponse.sendResponse(HTTPResponse.MESSAGE_OK, httpRequest.getRequestResourceExtension(requestResource));
         } else {
             ErrorPage errorPage = new ErrorPage();
             System.out.println("ファイルが見つかりませんでした");
             errorPage.setErrorMessage("404 NOT Found");
-            httpResponse.makeResponseBody(requestResource, httpResponse);
+            httpResponse.makeResponseBody(requestResource);
             httpResponse.sendResponse(HTTPResponse.MESSAGE_NOT_FOUND, httpRequest.getRequestResourceExtension(requestResource));
         }
     }

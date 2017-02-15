@@ -8,7 +8,7 @@ public class ErrorPage {
     /**
      * エラーメッセージを受け取るフィールド
      */
-    static String errorMessage;
+    private static String errorMessage;
 
     /**
      * エラーメッセージをセットするメソッド
@@ -30,7 +30,6 @@ public class ErrorPage {
                 .append("<p>" + errorMessage + "</p>")
                 .append("</body>");
 
-        byte[] Body = (new String(stringBuilder).getBytes());
-        return Body;
+        return (new String(stringBuilder).getBytes());
     }
 }
