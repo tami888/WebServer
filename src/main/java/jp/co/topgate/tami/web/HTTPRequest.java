@@ -27,6 +27,7 @@ public class HTTPRequest {
         this.setHTTPRequest(inputStream );
     }
 
+
     /**
      * クライアントからのリクエスト中のリクエストメソッド、リクエストURI、を抽出してフィールドに設定する
      */
