@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 public class FilesTest {
 
     @Test
-    public void testReadFile() throws IOException {
+    public void readFileでファイル内のデータを取得する() throws IOException {
         String expectedfile = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
