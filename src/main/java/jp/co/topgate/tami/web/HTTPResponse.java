@@ -26,7 +26,7 @@ public class HTTPResponse {
     /**
      * サーバー内部エラーの時
      */
-    static final int INTERNAL_SERVER_ERROR = 500;
+    static final int MESSAGE_INTERNAL_SERVER_ERROR = 500;
 
     /**
      * コンストラクタ
@@ -89,7 +89,7 @@ public class HTTPResponse {
         if (requestResource.exists()) {
             body = Files.readFile(requestResource);
         } else {
-            body = ErrorPage.writeHTML();
+            body = ErrorPage.makeErrorMessage();
         }
         setResponseBody(body);
     }
@@ -159,7 +159,7 @@ public class HTTPResponse {
                 fileType = "image/gif";
                 break;
             default:
-                System.out.println("contentTypeは見つかりませんでした");
+                fileType = "text/html";
         }
         return fileType;
     }

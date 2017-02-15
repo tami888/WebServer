@@ -50,7 +50,6 @@ public class HTTPResponseTest {
         try {
             httpResponse.sendResponse(HTTPResponse.MESSAGE_OK, "html");
         } catch (IOException e) {
-            System.err.println("エラー:" + e.getMessage());
             e.printStackTrace();
 
         }
@@ -65,13 +64,10 @@ public class HTTPResponseTest {
         try {
             result = bufferedReader.readLine();
             while (result != null) {
-                System.out.println(result);
                 stringBuilder.append(result);
                 result = bufferedReader.readLine();
             }
-            System.out.println(stringBuilder);
         } catch (IOException e) {
-            System.err.println("エラー" + e.getMessage());
             e.printStackTrace();
         }
 
@@ -94,7 +90,7 @@ public class HTTPResponseTest {
 
     @Test
     public void makeResponseBodyでファイルが存在するときのレスポンスを取得する() throws IOException {
-        String resource[] = {"src/main/resource/index.html", "src/main/resource/next.html", "src/main/resource/すし.html", "src/main/resource/dog.gif", "src/main/resource/index.css"};
+        String resource[] = {"src/test/resources/index.html", "src/test/resources/next.html", "src/test/resources/すし.html", "src/test/resources/dog.gif", "src/test/resources/index.css"};
 
         for (int i = 0; i < resource.length; i++) {
             File requestResource = new File(resource[i]);
@@ -117,13 +113,14 @@ public class HTTPResponseTest {
         }
     }
 
+
     @Test
     public void makeResponseBodyでファイルが存在しなかった場合エラーページを取得する() throws IOException {
         File requestResource = new File("");
         httpResponse.makeResponseBody(requestResource);
         byte[] expected = httpResponse.getResponseBody();
 
-        byte[] actual = ErrorPage.writeHTML();
+        byte[] actual = ErrorPage.makeErrorMessage();
 
         assertThat(actual, is(expected));
     }
