@@ -8,9 +8,7 @@ import java.io.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by honmatakumi on 2017/01/24.
- */
+
 public class HTTPResponseTest {
 
     private OutputStream outputStream = new ByteArrayOutputStream();
@@ -18,7 +16,7 @@ public class HTTPResponseTest {
 
 
     @Test
-    public void testCreateContentTypeHeader() {
+    public void CreateContentTypeHeaderでcontentTypeのヘッダーを取得する() {
         String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
         String expectedContents[] = {"Content-Type: text/html\n", "Content-Type: text/css\n", "Content-Type: text/js\n", "Content-Type: image/jpeg\n", "Content-Type: image/png\n", "Content-Type: image/gif\n"};
 
@@ -31,7 +29,7 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void testCreateContentType() {
+    public void CreateContentTypeで与えられたファイル拡張子のcontentTypeを判別する() {
         String fileExt[] = {"html", "css", "js", "jpeg", "png", "gif"};
         String expectedContents[] = {"text/html", "text/css", "text/js", "image/jpeg", "image/png", "image/gif"};
 
@@ -44,7 +42,7 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void testSendResponse() {
+    public void SendResponseで与えられたレスポンスボディを送る() {
         OutputStream outputStream = new ByteArrayOutputStream();
         HTTPResponse httpResponse = new HTTPResponse(outputStream);
 
@@ -82,15 +80,52 @@ public class HTTPResponseTest {
     }
 
     @Test
-    public void testCreateReasonPhrase() {
+    public void CreateReasonPhraseでstatusCodeからreasonPhraseを取得する() {
         int statusCode[] = {200, 400, 404, 500};
-        String expectedContents[] = {"OK", "Bad Request", "Not Found", "Internal Server Error"};
+        String actual[] = {"OK", "Bad Request", "Not Found", "Internal Server Error"};
 
         for (int i = 0; i < statusCode.length; i++) {
 
             int code = statusCode[i];
 
-            assertThat(expectedContents[i], is(httpResponse.createReasonPhrase(code)));
+            assertThat(actual[i], is(httpResponse.createReasonPhrase(code)));
         }
     }
+
+    @Test
+    public void makeResponseBodyでファイルが存在するときのレスポンスを取得する() throws IOException {
+        String resource[] = {"src/main/resource/index.html", "src/main/resource/next.html", "src/main/resource/すし.html", "src/main/resource/dog.gif", "src/main/resource/index.css"};
+
+        for (int i = 0; i < resource.length; i++) {
+            File requestResource = new File(resource[i]);
+            FileInputStream fis = new FileInputStream(requestResource);
+            BufferedInputStream bi = new BufferedInputStream(fis);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            int tmp = 0;
+            while ((tmp = bi.read()) != -1) {
+                byteArrayOutputStream.write(tmp);
+
+            }
+            bi.close();
+            byte[] actual = byteArrayOutputStream.toByteArray();
+            httpResponse.makeResponseBody(requestResource);
+            byte[] expected = httpResponse.getResponseBody();
+
+            assertThat(actual, is(expected));
+        }
+    }
+
+    @Test
+    public void makeResponseBodyでファイルが存在しなかった場合エラーページを取得する() throws IOException {
+        File requestResource = new File("");
+        httpResponse.makeResponseBody(requestResource);
+        byte[] expected = httpResponse.getResponseBody();
+
+        byte[] actual = ErrorPage.writeHTML();
+
+        assertThat(actual, is(expected));
+    }
+
 }
