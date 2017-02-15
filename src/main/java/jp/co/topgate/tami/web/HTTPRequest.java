@@ -4,7 +4,7 @@ package jp.co.topgate.tami.web;
 import java.io.*;
 import java.net.URLDecoder;
 
-class HTTPRequest {
+public class HTTPRequest {
     /**
      * クライアントからのリクエストライン
      */
@@ -47,14 +47,14 @@ class HTTPRequest {
             this.requestURI = secondSentence;
             System.out.println("secondSentenceは" + secondSentence);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new IOException(e);
         }
         this.requestMethod = this.requestLine.substring(0, this.requestLine.indexOf(" ")); // リクエストからのリクエストメソッドを抽出してフィールドに設定するメソッド
         System.out.println("リクエストメソッドは" + this.requestMethod);
     }
 
 
-    String getRequestResource() {
+    File getRequestResource() {
         String requestResource;
         if ((this.getRequestURI().endsWith("/")) || !(this.getRequestURI().substring(this.getRequestURI().lastIndexOf("/"), this.getRequestURI().length()).contains("."))) {
             requestResource = "src/main/resource" + this.getRequestURI() + "index.html";
@@ -64,15 +64,16 @@ class HTTPRequest {
         if (requestResource.contains("?")) {
             requestResource = requestResource.substring(requestResource.indexOf(""), requestResource.lastIndexOf("?"));
         }
+        File file = new File(requestResource);
 
         System.out.println("要求されているファイルは" + requestResource);
-        return requestResource;
+        return file;
     }
 
-    String getRequestResourceExtension(String requestResource) {
-
-        String extension = requestResource.substring(requestResource.lastIndexOf(".") + 1,
-                requestResource.lastIndexOf(""));
+    String getRequestResourceExtension(File requestResource) {
+        String path = requestResource.toString();
+        String extension = path.substring(path.lastIndexOf(".") + 1,
+                path.lastIndexOf(""));
         System.out.println("ファイルの拡張子は" + extension);
 
         return extension;
@@ -95,5 +96,4 @@ class HTTPRequest {
     String getRequestURI() {
         return this.requestURI;
     }
-
 }
