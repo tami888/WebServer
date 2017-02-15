@@ -33,6 +33,4 @@ public class FilesTest {
 
         assertThat(expected, is(Files.readFile(file)));
     }
-
-
 }

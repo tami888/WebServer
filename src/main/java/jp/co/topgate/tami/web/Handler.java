@@ -32,6 +32,6 @@ class Handler {
     static void handleError(HTTPRequest httpRequest, HTTPResponse httpResponse) throws IOException {
         System.out.print("エラーページを表示します");
         File requestResource = httpRequest.getRequestResource();
-        httpResponse.sendResponse(HTTPResponse.INTERNAL_SERVER_ERROR, httpRequest.getRequestResourceExtension(requestResource));
+        httpResponse.sendResponse(HTTPResponse.MESSAGE_INTERNAL_SERVER_ERROR, httpRequest.getRequestResourceExtension(requestResource));
     }
 }
